@@ -23,7 +23,6 @@ import com.microblink.view.recognition.ScanResultListener;
  * This class will take an image and recognize the Barcode
  *
  * @author assad
- *
  */
 public class RecognitionHelper {
 
@@ -51,7 +50,7 @@ public class RecognitionHelper {
         }
 
         mRecognizer.initialize(directActivity, getGenericRecognizerSettings(),
-                new RecognizerSettings[] { getPdf417RecognizerSettings()},
+                new RecognizerSettings[]{getPdf417RecognizerSettings()},
                 new DirectApiErrorListener() {
                     @Override
                     public void onRecognizerError(Throwable throwable) {
@@ -142,8 +141,10 @@ public class RecognitionHelper {
     }
 
     void terminateRecognizer() {
-        mRecognizer.terminate();
-        mRecognizer = null;
+        if (mRecognizer != null) {
+            mRecognizer.terminate();
+            mRecognizer = null;
+        }
     }
 
 
