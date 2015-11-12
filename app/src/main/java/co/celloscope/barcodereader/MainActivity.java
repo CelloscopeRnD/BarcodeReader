@@ -2,6 +2,7 @@ package co.celloscope.barcodereader;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,7 +14,8 @@ import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int CHOSE_PICTURE = 1;
+    private static final int REQUEST_IMAGE_CAPTURE = 2;
+    private static final int REQUEST_PICTURE = 1;
     FloatingActionButton fab;
     private static final String fileName = "good.jpg";
     private final RecognitionHelper recognitionHelper = new RecognitionHelper(
@@ -30,9 +32,15 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-                startActivityForResult(new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI), CHOSE_PICTURE);
+//                startActivityForResult(new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI),REQUEST_PICTURE);
+                dispatchTakePictureIntent();
+            }
+
+            private void dispatchTakePictureIntent() {
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+                }
             }
         });
     }
@@ -50,14 +58,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case CHOSE_PICTURE:
+            case REQUEST_PICTURE:
                 if (resultCode == RESULT_OK && null != data) {
                     String selectedImagePath = getPath(data.getData());
                     recognitionHelper.recognizeBitmap(BitmapFactory.decodeFile(selectedImagePath));
+                }
+                break;
+            case REQUEST_IMAGE_CAPTURE:
+                if (resultCode == RESULT_OK && null != data) {
+                    Bundle extras = data.getExtras();
+                    recognitionHelper.recognizeBitmap((Bitmap) extras.get("data"));
                 }
                 break;
             default:
