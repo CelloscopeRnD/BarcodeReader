@@ -39,7 +39,11 @@ public class RecognitionHelper {
      * Initialize recognizer; set license key;
      */
     void initializeRecognizer() {
+        if (mRecognizer != null) {
+            return;
+        }
         mRecognizer = Recognizer.getSingletonInstance();
+        Log.d(TAG, "initializeRecognizer() called with: " + "mRecognizer = [" + mRecognizer + "]");
         try {
             mRecognizer.setLicenseKey(directActivity, LicenseKey);
         } catch (InvalidLicenceKeyException e) {
@@ -67,6 +71,7 @@ public class RecognitionHelper {
     }
 
     void recognizeBitmap(Bitmap bitmap) {
+        Log.d(TAG, "recognizeBitmap() called with: " + "bitmap = [" + bitmap + "]" + "mRecognizer = [" + mRecognizer + "]");
         if (mRecognizer.getCurrentState() != Recognizer.State.READY) {
             Log.e(TAG, "Recognizer not ready!");
             return;
@@ -145,6 +150,7 @@ public class RecognitionHelper {
             mRecognizer.terminate();
             mRecognizer = null;
         }
+        Log.d(TAG, "terminateRecognizer() called with: " + "mRecognizer = [" + mRecognizer + "]");
     }
 
 
