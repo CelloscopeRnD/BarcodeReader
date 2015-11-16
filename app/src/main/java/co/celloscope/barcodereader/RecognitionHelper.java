@@ -1,8 +1,7 @@
 package co.celloscope.barcodereader;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.widget.Toast;
@@ -30,6 +29,9 @@ public class RecognitionHelper {
     private static final String LicenseKey = "DMZBGSNR-JJVYIXSD-KNI2YQWF-2BZ4DIZV-M5JH2SDI-WFBVGWOJ-5OGZSBTD-KBWFNYND";
     private Recognizer mRecognizer = null;
     private final MainActivity directActivity;
+    public static final String NAME = "NAME";
+    private static final String PIN = "PIN";
+    private static final String DOB = "DOB";
 
     public RecognitionHelper(MainActivity activity) {
         this.directActivity = activity;
@@ -78,7 +80,7 @@ public class RecognitionHelper {
         }
         if (bitmap != null) {
             mRecognizer.setOrientation(Orientation.ORIENTATION_LANDSCAPE_RIGHT);
-            directActivity.fab.setEnabled(false);
+//            directActivity.pickPhotoButton.setEnabled(false);
             final ProgressDialog pd = new ProgressDialog(directActivity);
             pd.setIndeterminate(true);
             pd.setMessage("Performing recognition");
@@ -108,34 +110,44 @@ public class RecognitionHelper {
                         directActivity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                directActivity.fab.setEnabled(true);
+//                                directActivity.pickPhotoButton.setEnabled(true);
                                 pd.dismiss();
 
-                                AlertDialog.Builder b = new AlertDialog.Builder(
-                                        directActivity);
-                                b.setTitle("Scan result")
-                                        .setMessage(scanResult)
-                                        .setCancelable(false)
-                                        .setNeutralButton(
-                                                "OK",
-                                                new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(
-                                                            DialogInterface dialog,
-                                                            int which) {
-                                                        dialog.dismiss();
-                                                    }
-                                                }).show();
+//                                AlertDialog.Builder b = new AlertDialog.Builder(
+//                                        directActivity);
+//                                b.setTitle("Scan result")
+//                                        .setMessage(scanResult)
+//                                        .setCancelable(false)
+//                                        .setNeutralButton(
+//                                                "OK",
+//                                                new DialogInterface.OnClickListener() {
+//                                                    @Override
+//                                                    public void onClick(
+//                                                            DialogInterface dialog,
+//                                                            int which) {
+//                                                        dialog.dismiss();
+//                                                    }
+//                                                }).show();
+
+                                Intent intent = new Intent();
+                                intent.putExtra(NAME, scanResult.substring(scanResult.indexOf("<name>") + 6, scanResult.indexOf("</name>")));
+                                intent.putExtra(PIN, scanResult.substring(scanResult.indexOf("<pin>") + 5, scanResult.indexOf("</pin>")));
+                                intent.putExtra(DOB, scanResult.substring(scanResult.indexOf("<DOB>") + 5, scanResult.indexOf("</DOB>")));
+                                directActivity.setResult(directActivity.RESULT_OK, intent);
+                                directActivity.finish();
                             }
                         });
                     } else {
-                        Toast.makeText(directActivity, "Nothing scanned!",
-                                Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(directActivity, "Nothing scanned!",
+//                                Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent();
+                        directActivity.setResult(directActivity.RESULT_CANCELED, intent);
+                        directActivity.finish();
                         // enable button again
                         directActivity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                directActivity.fab.setEnabled(true);
+//                                directActivity.pickPhotoButton.setEnabled(true);
                                 pd.dismiss();
                             }
                         });

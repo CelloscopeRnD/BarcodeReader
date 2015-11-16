@@ -7,16 +7,15 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_IMAGE_CAPTURE = 2;
     private static final int REQUEST_PICTURE = 1;
-    FloatingActionButton fab;
     private static final String fileName = "good.jpg";
     private final RecognitionHelper recognitionHelper = new RecognitionHelper(
             this);
@@ -28,11 +27,16 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.pickPhoto).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                startActivityForResult(new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI),REQUEST_PICTURE);
+                startActivityForResult(new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI), REQUEST_PICTURE);
+            }
+        });
+
+        findViewById(R.id.takePhoto).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 dispatchTakePictureIntent();
             }
 
@@ -69,8 +73,23 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case REQUEST_IMAGE_CAPTURE:
                 if (resultCode == RESULT_OK && null != data) {
-                    Bundle extras = data.getExtras();
-                    recognitionHelper.recognizeBitmap((Bitmap) extras.get("data"));
+//                    Bundle extras = data.getExtras();
+//                    Bitmap bitmap = (Bitmap) extras.get("data");
+//                    recognitionHelper.recognizeBitmap(bitmap);
+
+
+
+
+                    String[] projection = { MediaStore.Images.Media.DATA };
+                    Cursor cursor = managedQuery(
+                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                            projection, null, null, null);
+                    int column_index_data = cursor
+                            .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                    cursor.moveToLast();
+
+                    String selectedImagePath = cursor.getString(column_index_data);
+                    recognitionHelper.recognizeBitmap(BitmapFactory.decodeFile(selectedImagePath));
                 }
                 break;
             default:
