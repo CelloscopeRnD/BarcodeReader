@@ -32,6 +32,10 @@ public class RecognitionHelper {
     public static final String NAME = "NAME";
     private static final String PIN = "PIN";
     private static final String DOB = "DOB";
+    private static final String BARCODE_TYPE = "BarcodeType";
+    private static final String PDF417 = "PDF417";
+    private static final String BARCODE_CONTENT = "BarcodeContent";
+    private static final String NID = "NID";
 
     public RecognitionHelper(MainActivity activity) {
         this.directActivity = activity;
@@ -55,8 +59,12 @@ public class RecognitionHelper {
             directActivity.finish();
         }
 
+        final RecognizerSettings[] recognizerSettings = new RecognizerSettings[1];
+        if (PDF417.equals(directActivity.getIntent().getStringExtra(BARCODE_TYPE))) {
+            recognizerSettings[0] = getPdf417RecognizerSettings();
+        }
         mRecognizer.initialize(directActivity, getGenericRecognizerSettings(),
-                new RecognizerSettings[]{getPdf417RecognizerSettings()},
+                recognizerSettings,
                 new DirectApiErrorListener() {
                     @Override
                     public void onRecognizerError(Throwable throwable) {
@@ -80,13 +88,11 @@ public class RecognitionHelper {
         }
         if (bitmap != null) {
             mRecognizer.setOrientation(Orientation.ORIENTATION_LANDSCAPE_RIGHT);
-//            directActivity.pickPhotoButton.setEnabled(false);
             final ProgressDialog pd = new ProgressDialog(directActivity);
             pd.setIndeterminate(true);
             pd.setMessage("Performing recognition");
             pd.setCancelable(false);
             pd.show();
-            // recognize image
             mRecognizer.recognize(bitmap, new ScanResultListener() {
                 @Override
                 public void onScanningDone(BaseRecognitionResult[] dataArray,
@@ -105,49 +111,31 @@ public class RecognitionHelper {
                             }
                         }
 
-                        // raise dialog with barcode result on UI thread
                         final String scanResult = totalResult.toString();
                         directActivity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-//                                directActivity.pickPhotoButton.setEnabled(true);
                                 pd.dismiss();
-
-//                                AlertDialog.Builder b = new AlertDialog.Builder(
-//                                        directActivity);
-//                                b.setTitle("Scan result")
-//                                        .setMessage(scanResult)
-//                                        .setCancelable(false)
-//                                        .setNeutralButton(
-//                                                "OK",
-//                                                new DialogInterface.OnClickListener() {
-//                                                    @Override
-//                                                    public void onClick(
-//                                                            DialogInterface dialog,
-//                                                            int which) {
-//                                                        dialog.dismiss();
-//                                                    }
-//                                                }).show();
-
                                 Intent intent = new Intent();
-                                intent.putExtra(NAME, scanResult.substring(scanResult.indexOf("<name>") + 6, scanResult.indexOf("</name>")).toUpperCase());
-                                intent.putExtra(PIN, scanResult.substring(scanResult.indexOf("<pin>") + 5, scanResult.indexOf("</pin>")).toUpperCase());
-                                intent.putExtra(DOB, scanResult.substring(scanResult.indexOf("<DOB>") + 5, scanResult.indexOf("</DOB>")).toUpperCase());
+                                if (NID.equals(directActivity.getIntent().getStringExtra(BARCODE_CONTENT))) {
+                                    intent.putExtra(NAME, scanResult
+                                            .substring(scanResult.indexOf("<name>") + 6, scanResult.indexOf("</name>")).toUpperCase());
+                                    intent.putExtra(PIN, scanResult
+                                            .substring(scanResult.indexOf("<pin>") + 5, scanResult.indexOf("</pin>")).toUpperCase());
+                                    intent.putExtra(DOB, scanResult
+                                            .substring(scanResult.indexOf("<DOB>") + 5, scanResult.indexOf("</DOB>")).toUpperCase());
+                                }
                                 directActivity.setResult(directActivity.RESULT_OK, intent);
                                 directActivity.finish();
                             }
                         });
                     } else {
-//                        Toast.makeText(directActivity, "Nothing scanned!",
-//                                Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent();
                         directActivity.setResult(directActivity.RESULT_CANCELED, intent);
                         directActivity.finish();
-                        // enable button again
                         directActivity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-//                                directActivity.pickPhotoButton.setEnabled(true);
                                 pd.dismiss();
                             }
                         });

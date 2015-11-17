@@ -16,7 +16,6 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_IMAGE_CAPTURE = 2;
     private static final int REQUEST_PICTURE = 1;
-    private static final String fileName = "good.jpg";
     private final RecognitionHelper recognitionHelper = new RecognitionHelper(
             this);
 
@@ -73,13 +72,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case REQUEST_IMAGE_CAPTURE:
                 if (resultCode == RESULT_OK && null != data) {
-//                    Bundle extras = data.getExtras();
-//                    Bitmap bitmap = (Bitmap) extras.get("data");
-//                    recognitionHelper.recognizeBitmap(bitmap);
-
-
-
-
                     String[] projection = { MediaStore.Images.Media.DATA };
                     Cursor cursor = managedQuery(
                             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
