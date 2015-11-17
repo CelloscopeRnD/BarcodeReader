@@ -130,9 +130,9 @@ public class RecognitionHelper {
 //                                                }).show();
 
                                 Intent intent = new Intent();
-                                intent.putExtra(NAME, scanResult.substring(scanResult.indexOf("<name>") + 6, scanResult.indexOf("</name>")));
-                                intent.putExtra(PIN, scanResult.substring(scanResult.indexOf("<pin>") + 5, scanResult.indexOf("</pin>")));
-                                intent.putExtra(DOB, scanResult.substring(scanResult.indexOf("<DOB>") + 5, scanResult.indexOf("</DOB>")));
+                                intent.putExtra(NAME, scanResult.substring(scanResult.indexOf("<name>") + 6, scanResult.indexOf("</name>")).toUpperCase());
+                                intent.putExtra(PIN, scanResult.substring(scanResult.indexOf("<pin>") + 5, scanResult.indexOf("</pin>")).toUpperCase());
+                                intent.putExtra(DOB, scanResult.substring(scanResult.indexOf("<DOB>") + 5, scanResult.indexOf("</DOB>")).toUpperCase());
                                 directActivity.setResult(directActivity.RESULT_OK, intent);
                                 directActivity.finish();
                             }
