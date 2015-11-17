@@ -2,22 +2,26 @@ package co.celloscope.barcodereader;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.Toast;
+
+import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int REQUEST_IMAGE_CAPTURE = 2;
-    private static final int REQUEST_PICTURE = 1;
+    private static final int REQUEST_IMAGE_CAPTURE = 100;
+    private static final int REQUEST_PICTURE = 200;
     private final RecognitionHelper recognitionHelper = new RecognitionHelper(
             this);
+    private Uri barcodeImageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,13 +44,20 @@ public class MainActivity extends AppCompatActivity {
             }
 
             private void dispatchTakePictureIntent() {
+
+
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (intent.resolveActivity(getPackageManager()) != null) {
+                barcodeImageUri = Uri.fromFile(getOutputMediaFile());
+                if (barcodeImageUri != null) {
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, barcodeImageUri);
                     startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+                } else {
+                    Toast.makeText(MainActivity.this, "Failed to create directory", Toast.LENGTH_SHORT).show();
                 }
             }
         });
     }
+
 
     @Override
     protected void onDestroy() {
@@ -71,23 +82,32 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case REQUEST_IMAGE_CAPTURE:
-                if (resultCode == RESULT_OK && null != data) {
-                    String[] projection = { MediaStore.Images.Media.DATA };
-                    Cursor cursor = managedQuery(
-                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                            projection, null, null, null);
-                    int column_index_data = cursor
-                            .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                    cursor.moveToLast();
-
-                    String selectedImagePath = cursor.getString(column_index_data);
-                    recognitionHelper.recognizeBitmap(BitmapFactory.decodeFile(selectedImagePath));
+                if (resultCode == RESULT_OK) {
+                    recognitionHelper.recognizeBitmap(BitmapFactory.decodeFile(getOutputMediaFile().getPath()));
                 }
                 break;
             default:
                 super.onActivityResult(requestCode, resultCode, data);
                 break;
         }
+    }
+
+    private File getOutputMediaFile() {
+
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), "BarcodeReader");
+
+        // Create the storage directory if it does not exist
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                Log.d("BarcodeReader", "failed to create directory");
+                return null;
+            }
+        }
+
+        File mediaFile = new File(mediaStorageDir.getPath() + File.separator + "tempNID.jpg");
+
+        return mediaFile;
     }
 
     /**
