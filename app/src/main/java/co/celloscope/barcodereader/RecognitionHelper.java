@@ -67,13 +67,13 @@ public class RecognitionHelper {
         }
 
         final RecognizerSettings[] recognizerSettings = new RecognizerSettings[1];
-//        if (PDF417.equals(directActivity.getIntent().getStringExtra(BARCODE_TYPE))) {
-//            recognizerSettings[0] = getPdf417RecognizerSettings();
-//        } else if (QR.equals(directActivity.getIntent().getStringExtra(BARCODE_TYPE))) {
-//            recognizerSettings[0] = getZXingRecognizerSettings();
-//        }
+        if (PDF417.equals(directActivity.getIntent().getStringExtra(BARCODE_TYPE))) {
+            recognizerSettings[0] = getPdf417RecognizerSettings();
+        } else if (QR.equals(directActivity.getIntent().getStringExtra(BARCODE_TYPE))) {
+            recognizerSettings[0] = getZXingRecognizerSettings();
+        }
 
-        recognizerSettings[0] = getZXingRecognizerSettings();
+
         mRecognizer.initialize(directActivity, getGenericRecognizerSettings(),
                 recognizerSettings,
                 new DirectApiErrorListener() {
@@ -117,6 +117,7 @@ public class RecognitionHelper {
                                 public void run() {
                                     pd.dismiss();
                                     Intent intent = new Intent();
+                                    Log.d(TAG, scanResult);
                                     if (NID.equals(directActivity.getIntent().getStringExtra(BARCODE_CONTENT))) {
                                         intent.putExtra(NAME, scanResult
                                                 .substring(scanResult.indexOf("<name>") + 6, scanResult.indexOf("</name>")).toUpperCase());
