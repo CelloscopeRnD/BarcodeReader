@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void dispatchTakePictureIntent() {
+    void dispatchTakePictureIntent() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         barcodeImageUri = Uri.fromFile(getOutputMediaFile());
         if (barcodeImageUri != null) {
@@ -50,8 +50,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case REQUEST_IMAGE_CAPTURE:
-                if (resultCode == RESULT_OK) {
-                    recognitionHelper.recognizeBitmap(BitmapFactory.decodeFile(getOutputMediaFile().getPath()));
+                File file = getOutputMediaFile();
+                if (resultCode == RESULT_OK && file != null) {
+                    recognitionHelper.recognizeBitmap(BitmapFactory.decodeFile(file.getPath()));
                 }
                 break;
             default:

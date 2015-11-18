@@ -1,7 +1,9 @@
 package co.celloscope.barcodereader;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -134,13 +136,27 @@ public class RecognitionHelper {
                             });
                         }
                     } else {
-                        Intent intent = new Intent();
-                        directActivity.setResult(Activity.RESULT_CANCELED, intent);
-                        directActivity.finish();
                         directActivity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 pd.dismiss();
+                                new AlertDialog.Builder(directActivity)
+                                        .setMessage("Try again?")
+                                        .setCancelable(false)
+                                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                Intent intent = new Intent();
+                                                directActivity.setResult(Activity.RESULT_CANCELED, intent);
+                                                directActivity.finish();
+                                            }
+                                        })
+                                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                directActivity.dispatchTakePictureIntent();
+                                            }
+                                        }).show();
                             }
                         });
                     }
