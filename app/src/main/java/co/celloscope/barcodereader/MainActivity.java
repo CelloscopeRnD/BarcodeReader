@@ -2,6 +2,7 @@ package co.celloscope.barcodereader;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -47,8 +48,8 @@ public class MainActivity extends AppCompatActivity {
 //        } else {
 //            Toast.makeText(MainActivity.this, "Failed to create directory", Toast.LENGTH_SHORT).show();
 //        }
-        Intent intent = new Intent(this, CameraPreview.class);
-        startActivity(intent);
+        Intent intent = new Intent(this, CameraActivity.class);
+        startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
 
     }
 
@@ -57,9 +58,9 @@ public class MainActivity extends AppCompatActivity {
         switch (requestCode) {
             case REQUEST_IMAGE_CAPTURE:
                 Bundle extras = data.getExtras();
-                Bitmap imageBitmap = (Bitmap) extras.get("image");
+                File imageBitmap = (File) extras.get("image");
                 if (resultCode == RESULT_OK && imageBitmap != null) {
-                    recognitionHelper.recognizeBitmap(imageBitmap);
+                    recognitionHelper.recognizeBitmap(BitmapFactory.decodeFile(imageBitmap.getPath()));
                 }
                 break;
             default:

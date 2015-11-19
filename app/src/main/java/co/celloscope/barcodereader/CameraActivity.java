@@ -1,6 +1,9 @@
 package co.celloscope.barcodereader;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
@@ -59,6 +62,17 @@ public class CameraActivity extends Activity {
                                 } catch (IOException e) {
                                     Log.d(TAG, "Error accessing file: " + e.getMessage());
                                 }
+
+
+                                Intent intent = new Intent();
+                                intent.putExtra("image", pictureFile);
+                                setResult(RESULT_OK, intent);
+                                camera.stopPreview();
+                                if (camera != null) {
+                                    camera.release();
+                                    mCamera = null;
+                                }
+                                finish();
                             }
                         });
                     }
