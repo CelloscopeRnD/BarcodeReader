@@ -1,14 +1,11 @@
 package co.celloscope.barcodereader;
 
 import android.content.Intent;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.io.File;
 
@@ -42,23 +39,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void dispatchTakePictureIntent() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        Uri barcodeImageUri = Uri.fromFile(getOutputMediaFile());
-        if (barcodeImageUri != null) {
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, barcodeImageUri);
-            startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
-        } else {
-            Toast.makeText(MainActivity.this, "Failed to create directory", Toast.LENGTH_SHORT).show();
-        }
+//        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        Uri barcodeImageUri = Uri.fromFile(getOutputMediaFile());
+//        if (barcodeImageUri != null) {
+//            intent.putExtra(MediaStore.EXTRA_OUTPUT, barcodeImageUri);
+//            startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
+//        } else {
+//            Toast.makeText(MainActivity.this, "Failed to create directory", Toast.LENGTH_SHORT).show();
+//        }
+        Intent intent = new Intent(this, CameraPreview.class);
+        startActivity(intent);
+
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case REQUEST_IMAGE_CAPTURE:
-                File file = getOutputMediaFile();
-                if (resultCode == RESULT_OK && file != null) {
-                    recognitionHelper.recognizeBitmap(BitmapFactory.decodeFile(file.getPath()));
+                Bundle extras = data.getExtras();
+                Bitmap imageBitmap = (Bitmap) extras.get("image");
+                if (resultCode == RESULT_OK && imageBitmap != null) {
+                    recognitionHelper.recognizeBitmap(imageBitmap);
                 }
                 break;
             default:
