@@ -11,10 +11,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.io.File;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,9 +28,6 @@ public class MainActivity extends AppCompatActivity {
         dispatchTakePictureIntent();
     }
 
-
-
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -42,13 +35,11 @@ public class MainActivity extends AppCompatActivity {
         recognitionHelper.terminateRecognizer();
     }
 
-
     private void deleteBarcodeFile() {
         File outputMediaFile = getOutputMediaFile();
         boolean isDeleted = outputMediaFile != null && outputMediaFile.delete();
         Log.d(TAG, String.valueOf(isDeleted));
     }
-
 
     void dispatchTakePictureIntent() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
