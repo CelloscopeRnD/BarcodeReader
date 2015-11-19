@@ -15,15 +15,15 @@ import java.io.File;
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_IMAGE_CAPTURE = 100;
+    private static final String TAG = MainActivity.class.getSimpleName();
     private final RecognitionHelper recognitionHelper = new RecognitionHelper(
             this);
-    private Uri barcodeImageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        deleteBarcodeFile();
         recognitionHelper.initializeRecognizer();
         dispatchTakePictureIntent();
     }
@@ -31,13 +31,21 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        deleteBarcodeFile();
         recognitionHelper.terminateRecognizer();
+    }
+
+
+    private void deleteBarcodeFile() {
+        File outputMediaFile = getOutputMediaFile();
+        boolean isDeleted = outputMediaFile != null && outputMediaFile.delete();
+        Log.d(TAG, String.valueOf(isDeleted));
     }
 
 
     void dispatchTakePictureIntent() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        barcodeImageUri = Uri.fromFile(getOutputMediaFile());
+        Uri barcodeImageUri = Uri.fromFile(getOutputMediaFile());
         if (barcodeImageUri != null) {
             intent.putExtra(MediaStore.EXTRA_OUTPUT, barcodeImageUri);
             startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);

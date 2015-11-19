@@ -6,7 +6,6 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -16,9 +15,7 @@ import com.microblink.hardware.orientation.Orientation;
 import com.microblink.recognition.InvalidLicenceKeyException;
 import com.microblink.recognizers.BaseRecognitionResult;
 import com.microblink.recognizers.barcode.pdf417.Pdf417RecognizerSettings;
-import com.microblink.recognizers.barcode.pdf417.Pdf417ScanResult;
 import com.microblink.recognizers.barcode.zxing.ZXingRecognizerSettings;
-import com.microblink.recognizers.barcode.zxing.ZXingScanResult;
 import com.microblink.recognizers.settings.GenericRecognizerSettings;
 import com.microblink.recognizers.settings.RecognizerSettings;
 import com.microblink.view.recognition.RecognitionType;
@@ -29,13 +26,14 @@ import com.microblink.view.recognition.ScanResultListener;
  *
  * @author assad
  */
-public class RecognitionHelper {
+class RecognitionHelper {
 
     private static final String TAG = RecognitionHelper.class.getSimpleName();
+    @SuppressWarnings("SpellCheckingInspection")
     private static final String LicenseKey = "DMZBGSNR-JJVYIXSD-KNI2YQWF-2BZ4DIZV-M5JH2SDI-WFBVGWOJ-5OGZSBTD-KBWFNYND";
     private Recognizer mRecognizer = null;
     private final MainActivity directActivity;
-    public static final String NAME = "NAME";
+    private static final String NAME = "NAME";
     private static final String PIN = "PIN";
     private static final String DOB = "DOB";
     private static final String BARCODE_TYPE = "BarcodeType";
