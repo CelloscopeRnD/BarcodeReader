@@ -2,12 +2,10 @@ package co.celloscope.barcodereader;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.hardware.Camera;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -48,7 +46,14 @@ public class CameraActivity extends Activity {
                         mCamera.takePicture(null, null, new Camera.PictureCallback() {
                             @Override
                             public void onPictureTaken(byte[] data, Camera camera) {
-                                File pictureFile = getOutputMediaFile();
+                                File pictureFile = null;
+                                Bundle bundle = getIntent().getExtras();
+                                if (bundle != null) {
+                                    pictureFile = (File) bundle.get(MediaStore.EXTRA_OUTPUT);
+                                }
+                                if (pictureFile == null) {
+                                    pictureFile = getOutputMediaFile();
+                                }
                                 if (pictureFile == null) {
                                     return;
                                 }
