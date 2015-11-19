@@ -25,6 +25,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * This class will take an image and recognize the Barcode
@@ -170,14 +171,15 @@ class RecognitionHelper {
 
     /**
      * Format date string from "dd MM yyyy" to "yyyyMMdd"
+     *
      * @param birthDay Date of the birth in "dd MM yyyy" format
      * @return string in yyyyMMdd format
      */
     private String getDateInFormattedString(String birthDay) {
         try {
-            DateFormat format = new SimpleDateFormat("dd MMM yyyy");
+            DateFormat format = new SimpleDateFormat("dd MMM yyyy", Locale.US);
             Date date = format.parse(birthDay);
-            return new SimpleDateFormat("yyyyMMdd").format(date);
+            return new SimpleDateFormat("yyyyMMdd", Locale.US).format(date);
         } catch (ParseException e) {
             e.printStackTrace();
             return birthDay;

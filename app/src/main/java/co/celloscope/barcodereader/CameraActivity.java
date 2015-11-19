@@ -17,13 +17,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 @SuppressWarnings("deprecation")
 public class CameraActivity extends Activity {
 
     private static final String TAG = CameraActivity.class.getSimpleName();
     private Camera mCamera;
-    private CameraPreview mPreview;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -33,7 +33,7 @@ public class CameraActivity extends Activity {
         // Create an instance of Camera
         mCamera = getCameraInstance();
         // Create our Preview view and set it as the content of our activity.
-        mPreview = new CameraPreview(this, mCamera);
+        CameraPreview mPreview = new CameraPreview(this, mCamera);
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(mPreview);
 
@@ -73,10 +73,8 @@ public class CameraActivity extends Activity {
                                 intent.putExtra("image", pictureFile);
                                 setResult(RESULT_OK, intent);
                                 camera.stopPreview();
-                                if (camera != null) {
-                                    camera.release();
-                                    mCamera = null;
-                                }
+                                camera.release();
+                                mCamera = null;
                                 finish();
                             }
                         });
@@ -107,7 +105,7 @@ public class CameraActivity extends Activity {
         }
 
         // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        @SuppressWarnings("SpellCheckingInspection") String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date());
         File mediaFile;
         mediaFile = new File(mediaStorageDir.getPath() + File.separator +
                 "IMG_" + timeStamp + ".jpg");
@@ -118,7 +116,7 @@ public class CameraActivity extends Activity {
     /**
      * A safe way to get an instance of the Camera object.
      */
-    public static Camera getCameraInstance() {
+    private static Camera getCameraInstance() {
         Camera c = null;
         try {
             c = Camera.open(); // attempt to get a Camera instance
