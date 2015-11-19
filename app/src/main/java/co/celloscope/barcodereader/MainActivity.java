@@ -11,6 +11,10 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,6 +31,9 @@ public class MainActivity extends AppCompatActivity {
         recognitionHelper.initializeRecognizer();
         dispatchTakePictureIntent();
     }
+
+
+
 
     @Override
     protected void onDestroy() {

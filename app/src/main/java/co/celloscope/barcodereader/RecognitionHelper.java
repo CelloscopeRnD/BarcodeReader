@@ -21,6 +21,11 @@ import com.microblink.recognizers.settings.RecognizerSettings;
 import com.microblink.view.recognition.RecognitionType;
 import com.microblink.view.recognition.ScanResultListener;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * This class will take an image and recognize the Barcode
  *
@@ -122,9 +127,9 @@ class RecognitionHelper {
                                         intent.putExtra(NAME, scanResult
                                                 .substring(scanResult.indexOf("<name>") + 6, scanResult.indexOf("</name>")).toUpperCase());
                                         intent.putExtra(PIN, scanResult
-                                                .substring(scanResult.indexOf("<pin>") + 5, scanResult.indexOf("</pin>")).toUpperCase());
-                                        intent.putExtra(DOB, scanResult
-                                                .substring(scanResult.indexOf("<DOB>") + 5, scanResult.indexOf("</DOB>")).toUpperCase());
+                                                .substring(scanResult.indexOf("<pin>") + 5, scanResult.indexOf("</pin>")));
+                                        intent.putExtra(DOB, getDateInFormattedString(scanResult
+                                                .substring(scanResult.indexOf("<DOB>") + 5, scanResult.indexOf("</DOB>"))));
                                     } else if (ABC.equals(directActivity.getIntent().getStringExtra(BARCODE_CONTENT))) {
                                         intent.putExtra(PIN, scanResult.toUpperCase());
                                     }
@@ -160,6 +165,22 @@ class RecognitionHelper {
                     }
                 }
             });
+        }
+    }
+
+    /**
+     * Format date string from "dd MM yyyy" to "yyyyMMdd"
+     * @param birthDay Date of the birth in "dd MM yyyy" format
+     * @return string in yyyyMMdd format
+     */
+    private String getDateInFormattedString(String birthDay) {
+        try {
+            DateFormat format = new SimpleDateFormat("dd MMM yyyy");
+            Date date = format.parse(birthDay);
+            return new SimpleDateFormat("yyyyMMdd").format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return birthDay;
         }
     }
 
