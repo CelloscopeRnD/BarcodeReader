@@ -125,17 +125,27 @@ class RecognitionHelper {
                                     Intent intent = new Intent();
                                     Log.d(TAG, scanResult);
                                     if (NID.equals(directActivity.getIntent().getStringExtra(BARCODE_CONTENT))) {
-                                        intent.putExtra(NAME, scanResult
-                                                .substring(scanResult.indexOf("<name>") + 6, scanResult.indexOf("</name>")).toUpperCase());
-                                        intent.putExtra(PIN, scanResult
-                                                .substring(scanResult.indexOf("<pin>") + 5, scanResult.indexOf("</pin>")));
-                                        intent.putExtra(DOB, getDateInFormattedString(scanResult
-                                                .substring(scanResult.indexOf("<DOB>") + 5, scanResult.indexOf("</DOB>"))));
+                                        intent.putExtra(NAME, getTaggedString(scanResult, "name"));
+                                        intent.putExtra(PIN, getTaggedString(scanResult, "pin"));
+                                        intent.putExtra(DOB, getDateInFormattedString(getTaggedString(scanResult, "DOB")));
                                     } else if (ABC.equals(directActivity.getIntent().getStringExtra(BARCODE_CONTENT))) {
                                         intent.putExtra(PIN, scanResult.toUpperCase());
                                     }
                                     directActivity.setResult(Activity.RESULT_OK, intent);
                                     directActivity.finish();
+                                }
+
+                                private String getTaggedString(String text, String tagName) {
+                                    Log.i(TAG, tagName);
+                                    String startTag = "<" + tagName + ">";
+                                    String endTag = "</" + tagName + ">";
+                                    Log.i(TAG, startTag);
+                                    Log.i(TAG, endTag);
+                                    if (text.contains(startTag) && text.contains(endTag)) {
+                                        return text.substring(text.indexOf(startTag) + startTag.length(), text.indexOf(endTag));
+                                    } else {
+                                        return "";
+                                    }
                                 }
                             });
                         }
@@ -177,6 +187,9 @@ class RecognitionHelper {
      */
     private String getDateInFormattedString(String birthDay) {
         try {
+            if (birthDay == null || birthDay.equals("")) {
+                return "";
+            }
             DateFormat format = new SimpleDateFormat("dd MMM yyyy", Locale.US);
             Date date = format.parse(birthDay);
             return new SimpleDateFormat("yyyyMMdd", Locale.US).format(date);
