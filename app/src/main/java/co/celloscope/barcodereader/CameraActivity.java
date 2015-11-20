@@ -7,9 +7,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import java.security.Policy;
+
 @SuppressWarnings("deprecation")
 public class CameraActivity extends Activity {
-    private final RecognitionHelper recognitionHelper = new RecognitionHelper(this);
+    private RecognitionHelper recognitionHelper;
     private Camera mCamera;
 
     @Override
@@ -17,13 +19,15 @@ public class CameraActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
+        recognitionHelper = new RecognitionHelper(this);
         recognitionHelper.initializeRecognizer();
         mCamera = getCameraInstance();
-        mCamera.getParameters().setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+        Camera.Parameters parameters= mCamera.getParameters();
+        parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+        mCamera.setParameters(parameters);
         CameraPreview mPreview = new CameraPreview(this, mCamera);
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(mPreview);
-
         preview.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -45,9 +49,10 @@ public class CameraActivity extends Activity {
         mCamera = null;
     }
 
-    public void startCameraPreview(){
+    public void startCameraPreview() {
         mCamera.startPreview();
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

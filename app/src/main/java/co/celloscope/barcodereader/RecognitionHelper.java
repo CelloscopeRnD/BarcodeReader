@@ -166,7 +166,7 @@ class RecognitionHelper {
                                                 Intent intent = new Intent();
                                                 directActivity.setResult(Activity.RESULT_CANCELED, intent);
                                                 directActivity.releaseCamera();
-                                                        directActivity.finish();
+                                                directActivity.finish();
                                             }
                                         })
                                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
