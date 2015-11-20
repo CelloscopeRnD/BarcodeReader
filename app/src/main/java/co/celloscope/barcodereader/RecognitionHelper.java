@@ -38,7 +38,7 @@ class RecognitionHelper {
     @SuppressWarnings("SpellCheckingInspection")
     private static final String LicenseKey = "DMZBGSNR-JJVYIXSD-KNI2YQWF-2BZ4DIZV-M5JH2SDI-WFBVGWOJ-5OGZSBTD-KBWFNYND";
     private Recognizer mRecognizer = null;
-    private final MainActivity directActivity;
+    private final CameraActivity directActivity;
     private static final String NAME = "NAME";
     private static final String PIN = "PIN";
     private static final String DOB = "DOB";
@@ -50,7 +50,7 @@ class RecognitionHelper {
     private static final String NID = "NID";
 
 
-    public RecognitionHelper(MainActivity activity) {
+    public RecognitionHelper(CameraActivity activity) {
         this.directActivity = activity;
     }
 
@@ -131,7 +131,10 @@ class RecognitionHelper {
                                     } else if (ABC.equals(directActivity.getIntent().getStringExtra(BARCODE_CONTENT))) {
                                         intent.putExtra(PIN, scanResult.toUpperCase());
                                     }
+
+
                                     directActivity.setResult(Activity.RESULT_OK, intent);
+                                    directActivity.releaseCamera();
                                     directActivity.finish();
                                 }
 
@@ -162,13 +165,14 @@ class RecognitionHelper {
                                             public void onClick(DialogInterface dialog, int which) {
                                                 Intent intent = new Intent();
                                                 directActivity.setResult(Activity.RESULT_CANCELED, intent);
-                                                directActivity.finish();
+                                                directActivity.releaseCamera();
+                                                        directActivity.finish();
                                             }
                                         })
                                         .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
-                                                directActivity.dispatchTakePictureIntent();
+                                                directActivity.startCameraPreview();
                                             }
                                         }).show();
                             }
